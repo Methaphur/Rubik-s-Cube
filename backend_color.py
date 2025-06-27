@@ -1,7 +1,10 @@
+import random
+import time
+
 class Cube:
     def __init__(self):
         self.state = list(range(1, 55))
-        self.colors = ['W'] * 9 + ['G'] * 9 + ['R'] * 9 + ['B'] * 9 + ['Y'] * 9 + ['O'] * 9
+        self.colors = ['W'] * 9 + ['G'] * 9 + ['R'] * 9 + ['B'] * 9 + ['O'] * 9 + ['Y'] * 9
 
     def apply_move(self, cycles):
         for cycle in cycles:
@@ -78,12 +81,11 @@ class Cube:
         }
 
         def row_color(indices):
-            return ' '.join(self.colorize(self.colors[self.state[i] - 1]) for i in indices)
+            return ''.join(self.colorize(self.colors[self.state[i] - 1]) for i in indices)
 
-        print()
         for row in faces['U']:
-            print(" " * 10 + row_color(row))
-            print()
+            print(" " * 8 + row_color(row))
+        print()
 
         for i in range(3):
             print(
@@ -91,30 +93,61 @@ class Cube:
                 row_color(faces['F'][i]) + "  " +
                 row_color(faces['R'][i])
             )
-            print()
         print()
 
         for row in faces['D']:
-            print(" " * 10 + row_color(row))
-            print()
+            print(" " * 8 + row_color(row))
+            # print()
 
+        print()
         for row in faces['B']:
-            print(" " * 10 + row_color(row))
-            print()
+            print(" " * 8 + row_color(row))
+            # print()
         print("\n-------------------------------\n")
 
 
-cube = Cube()
-cube.display_net()
-print(cube.state)
+class Game:
+    def __init__(self):
+        self.cube = Cube()
+
+    def start(self):
+        self.cube.display_net()
+        print("Type 'F', 'B', 'U', 'D', 'L', 'R' to make moves, 'RANDOM' for random moves, or 'EXIT' to quit.")
+
+        def do_random_moves(cube, n=10):
+            moves = ['F', 'B', 'U', 'D', 'L', 'R']
+            for _ in range(n):
+                move = random.choice(moves)
+                print(f"Random move: {move}")
+                getattr(cube, f"move_{move}")()
+                cube.display_net()
+                time.sleep(0.5)
+
+        while True:
+            command = input("Enter your move: ").strip().upper()
+            if command == 'EXIT':
+                break
+            elif command == 'F':
+                self.cube.move_F()
+            elif command == 'B':
+                self.cube.move_B()
+            elif command == 'U':
+                self.cube.move_U()
+            elif command == 'D':
+                self.cube.move_D()
+            elif command == 'L':
+                self.cube.move_L()
+            elif command == 'R':
+                self.cube.move_R()
+            elif command == 'RANDOM':
+                do_random_moves(self.cube)
+            elif command == 'RESET':
+                self.cube = Cube()
+                print("Cube has been reset.")
+            else:
+                print("Invalid command. Please try again.")
+            self.cube.display_net()
 
 
-cube.move_R()
-cube.display_net()
-print(cube.state)
-
-cube.move_L()
-cube.display_net()
-
-cube.move_F()
-cube.display_net()
+game = Game()
+game.start()
